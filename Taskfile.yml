@@ -1,0 +1,6 @@
+version: 3
+
+tasks:
+  docker:
+    cmds:
+      - docker run --rm -ti --user $(id -u) --workdir /home -v $PWD:/work debian:latest

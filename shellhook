@@ -1,0 +1,115 @@
+#!/bin/bash
+
+. clish.bash
+
+
+
+
+
+
+app__install__help ()
+{
+    echo "Display install help"
+   echo "YOOOO"
+
+}
+
+
+# Main app parser
+app__install__getopts ()
+{
+  : "optargs=hs:c:p:m:"
+
+  local match=$1
+  local optval=$2
+  shift 2
+  local option_cli=$1
+  local prefix=app__install
+
+  case "${match}" in
+      -h|--help)
+        : ";Show this help"
+        ${prefix}__help;
+        clish_usage_getopts ${prefix}__getopts
+        _script_die 0 ;;
+      -f|--force)
+        : ";Enable force mode" 
+        ;;
+      -s|--shell)
+        : ";Set shell"
+        _script_log INFO "Dry mode enabled"
+        CTX_SHELL=$optval ;;
+      -c|--component)
+        : ";Enable force mode"
+        _script_log INFO "Force mode enabled"
+        CTX_COMMENT=$optval ;;
+
+      -p|--priority)
+        : ";Enable force mode"
+        _script_log INFO "FORCE mode enabled"
+        CTX_PRIORITY=$optval ;;
+
+
+    #   -v|--verbose)
+    #     : "DEBUG|INFO|WARN;Set verbosity"
+    #     [[ ":$APP_LOG_SCALE:" == *":${optval:-}:"* ]] || {
+    #       _script_die 1 "Invalid option for -v: $optval"
+    #     }
+    #     _script_log INFO "Log level set to: $optval"
+    #     APP_LOG_LEVEL=$optval ;;
+      -m|--msg)
+        : "TEXT;Set text message with spaces"
+        _script_log INFO "Comment Message set to: '$optval'"
+        # APP_MSG=$OPTARG 
+        ;;
+      *)
+        
+        local helpmsg="$option_cli"
+        [[ "$option_cli" == "$match" ]] || helpmsg="$helpmsg ($match)"
+            clish_usage_getopts ${prefix}__getopts
+          
+          _script_log ERROR "Unknown option: ${helpmsg}"
+          return 200
+        #   _script_die 1 "Unknown option: ${helpmsg}"
+      ;;
+  esac
+}
+
+
+cli__install ()
+{
+    : "help=Install components"
+    : "args=[OPTS] COMPONENT NAME"
+
+    echo "My other command"
+    # return 0
+
+
+    CTX_SHELL=${SHELL:-_ALL_}
+    CTX_COMMENT=
+    CTX_PRIORITY=
+
+    # Parse options
+    clish_parse_getopts app__install__getopts "$@"
+    set -- "${ARGS[@]}"
+    
+    echo "INSTALL: $1"
+    echo "NAME: $2" || echo "FAIL"
+    return 0
+    
+    
+    # shellcheck disable=SC2068
+    shift 1 || true
+    # if ! ; then
+    #     app__install__help
+    #     _script_die 1 "Missing command"
+    # fi
+    local cmd=${1:-help}
+
+    # Load app
+    # clish_parse_cmd __cli_install "$cmd" "$@"
+
+}
+
+
+clish_init "$@"
